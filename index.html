@@ -516,6 +516,7 @@
                 height: 85vh;
                 width: auto;
                 margin-top: 0;
+                opacity: 0.5;
                 display: block;
             }
 
@@ -964,23 +965,76 @@
             }
         }
 
+        /* ── PORTFOLIO MOBILE: native vertical scroll ── */
         @media (max-width: 768px) {
+            .portfolio {
+                height: auto;
+                /* release 100vh desktop lock */
+                overflow: visible;
+                /* allow natural page flow */
+            }
+
             .portfolio-ui {
-                background: linear-gradient(to top, var(--canvas) 0%, rgba(250, 250, 248, 0.9) 30%, transparent 100%);
-                padding-bottom: 2rem;
+                position: relative;
+                /* pull out of absolute stacking */
+                background: none;
+                padding: 2rem clamp(1.5rem, 4vw, 3rem) 2.5rem;
+                pointer-events: auto;
+            }
+
+            .portfolio-descriptions {
+                height: auto;
+                /* remove fixed 200px desktop height */
+            }
+
+            /* All descriptions rendered statically in flow */
+            .port-desc {
+                position: static;
+                opacity: 1 !important;
+                transform: none !important;
+                pointer-events: auto;
+                margin-bottom: 2rem;
+                /* Preserve --ease-signature for any entry transitions */
+                transition: opacity 0.6s var(--ease-signature),
+                    transform 0.6s var(--ease-signature);
+            }
+
+            .portfolio-progress-wrapper {
+                display: none;
+                /* irrelevant on mobile vertical scroll */
+            }
+
+            .portfolio-perspective {
+                position: static;
+                height: auto;
             }
 
             .portfolio-rotator {
                 transform: none;
+                /* remove desktop rotateY(-14deg) */
+                height: auto;
+                display: block;
             }
 
             .portfolio-track {
-                padding-left: 2rem;
+                display: flex;
+                flex-direction: column;
+                /* VERTICAL STACK */
+                gap: 1.5rem;
+                padding: 0 clamp(1.5rem, 4vw, 3rem) 4rem;
             }
 
             .port-card {
-                height: 40vh;
-                width: max-content;
+                width: 100%;
+                /* full-width cards */
+                height: clamp(220px, 55vw, 380px);
+                flex-shrink: unset;
+            }
+
+            .port-media {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
 
@@ -2124,55 +2178,59 @@
                 const progressBar = document.querySelector('.portfolio-progress-bar');
                 const rotator = document.querySelector('.portfolio-rotator');
 
-                const getScrollDist = () => track.scrollWidth - window.innerWidth;
+                // ── Desktop-only: pinned horizontal scroll + 3D rotator ──
+                // Wrapped in mm.add so ScrollTrigger never fires on mobile.
+                const mm = gsap.matchMedia();
 
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: trigger,
-                        pin: true,
-                        scrub: 1,
-                        start: 'top top',
-                        end: () => `+=${getScrollDist()}`,
-                        invalidateOnRefresh: true,
-                        onUpdate: (self) => {
-                            const progress = self.progress;
-                            let index = Math.round(progress * (cards.length - 1));
+                mm.add("(min-width: 768px)", () => {
+                    const getScrollDist = () => track.scrollWidth - window.innerWidth;
 
-                            descs.forEach((desc, i) => {
-                                if (i === index) {
-                                    desc.classList.add('active');
-                                } else {
-                                    desc.classList.remove('active');
-                                }
-                            });
+                    const tl = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: trigger,
+                            pin: true,
+                            scrub: 1,
+                            start: 'top top',
+                            end: () => `+=${getScrollDist()}`,
+                            invalidateOnRefresh: true,
+                            onUpdate: (self) => {
+                                const progress = self.progress;
+                                let index = Math.round(progress * (cards.length - 1));
+                                descs.forEach((desc, i) => {
+                                    desc.classList.toggle('active', i === index);
+                                });
+                            }
                         }
-                    }
-                });
-
-                tl.to(track, {
-                    x: () => -getScrollDist(),
-                    ease: 'none'
-                });
-
-                tl.to(progressBar, {
-                    scaleX: 1,
-                    ease: 'none'
-                }, 0);
-
-                if (!IS_MOBILE && rotator) {
-                    let mouseX = 0;
-                    window.addEventListener('mousemove', (e) => {
-                        mouseX = e.clientX / window.innerWidth - 0.5;
                     });
 
-                    let currentRot = -14;
-                    const loop = () => {
-                        currentRot += ((-14 + mouseX * 5) - currentRot) * 0.1;
-                        rotator.style.transform = `rotateY(${currentRot}deg)`;
-                        requestAnimationFrame(loop);
-                    };
-                    loop();
-                }
+                    tl.to(track, {
+                        x: () => -getScrollDist(),
+                        ease: 'none'
+                    });
+
+                    tl.to(progressBar, {
+                        scaleX: 1,
+                        ease: 'none'
+                    }, 0);
+
+                    if (rotator) {
+                        let mouseX = 0;
+                        window.addEventListener('mousemove', (e) => {
+                            mouseX = e.clientX / window.innerWidth - 0.5;
+                        });
+
+                        let currentRot = -14;
+                        const loop = () => {
+                            currentRot += ((-14 + mouseX * 5) - currentRot) * 0.1;
+                            rotator.style.transform = `rotateY(${currentRot}deg)`;
+                            requestAnimationFrame(loop);
+                        };
+                        loop();
+                    }
+
+                    // GSAP mm tears down ScrollTriggers automatically on breakpoint exit
+                    return () => { };
+                });
 
                 const videoCards = document.querySelectorAll('.video-card');
                 const observer = new IntersectionObserver((entries) => {
