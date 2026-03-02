@@ -413,7 +413,7 @@
             max-width: 500px;
             margin-left: clamp(1rem, 5vw, 6rem);
             opacity: 0;
-            /* Animated in */
+            color: var(--ink);
         }
 
         .hero-tagline {
@@ -492,6 +492,10 @@
                 transform: translateY(-5vh);
             }
 
+            .hero-content {
+                transform: translateY(-20vh);
+            }
+
             .hero-meta {
                 top: 80% !important;
                 color: var(--ink);
@@ -506,8 +510,8 @@
 
             .hero-image-wrapper {
                 position: absolute;
-                right: -60vw;
-                transform: translateY(5vh);
+                right: -25vw;
+                transform: translateY(20vh);
                 bottom: 0;
                 height: 85vh;
                 width: auto;
@@ -747,27 +751,6 @@
             margin-bottom: 2rem;
             flex-grow: 1;
             transform: translateZ(20px);
-        }
-
-        .work-card-link {
-            font-family: var(--font-m);
-            font-size: clamp(0.6rem, 0.8vw, 0.85rem);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transform: translateZ(25px);
-        }
-
-        .work-card-link::after {
-            content: '→';
-            transition: transform 0.4s var(--ease-float);
-        }
-
-        .work-card:hover .work-card-link::after {
-            transform: translateX(4px);
         }
 
         /* ── PORTFOLIO ── */
@@ -1410,8 +1393,7 @@
                                     class="work-card-category">Pedagogy</span></div>
                             <h3 class="work-card-title">Sta. Rita High School</h3>
                             <p class="work-card-desc">Developed and taught innovative social studies curricula,
-                                integrating multimedia to boost student engagement.</p><span class="work-card-link">View
-                                Details</span>
+                                integrating multimedia to boost student engagement.</p>
                         </div>
                     </a>
                     <a href="#" class="work-card reveal" data-tilt>
@@ -1420,8 +1402,7 @@
                                     class="work-card-category">Data Management</span></div>
                             <h3 class="work-card-title">DOLE-GIP / PESO Olongapo</h3>
                             <p class="work-card-desc">Streamlined data encoding and profiling for
-                                large-scale workforce development initiatives.</p><span class="work-card-link">View
-                                Details</span>
+                                large-scale workforce development initiatives.</p>
                         </div>
                     </a>
                     <a href="#" class="work-card reveal" data-tilt>
@@ -1431,8 +1412,7 @@
                             <h3 class="work-card-title">Doc Gregg Vet Clinic</h3>
                             <p class="work-card-desc">Managed high-volume client communications and
                                 appointments,
-                                ensuring optimal clinic workflow.</p><span class="work-card-link">View
-                                Details</span>
+                                ensuring optimal clinic workflow.</p>
                         </div>
                     </a>
                     <a href="#" class="work-card reveal" data-tilt>
@@ -1443,8 +1423,7 @@
                             <h3 class="work-card-title">Digital Solutions</h3>
                             <p class="work-card-desc">Freelance social media management,
                                 light graphic design,
-                                and technical troubleshooting for personal brands.</p><span class="work-card-link">View
-                                Details</span>
+                                and technical troubleshooting for personal brands.</p>
                         </div>
                     </a>
                 </div>
